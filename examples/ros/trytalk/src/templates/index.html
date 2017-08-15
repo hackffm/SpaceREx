@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Roboter test application</title>
+<link href="/javascripts/jquery-ui-1.12.1.custom/jquery-ui.css"	rel="stylesheet" />
+<link	href="/javascripts/jquery-ui-iconfont-master/jquery-ui.icon-font.css"	rel="stylesheet" type="text/css" />
+<link href="/stylesheets/robota.css" rel="stylesheet"/>
+
+<script	src="/javascripts/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
+<script src="/javascripts/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+
+<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+<body>
+
+	<div id="labelCurrentSet">
+		<label>Currently Set:</label>
+		<input type="text" id="labelPositionPitch" readonly />
+		<input type="text" id="positionPitch" readonly	/>
+	</div>
+
+	<div id="slider-position-pitch"></div>
+	<div id="slider-position-yaw"></div>
+
+	<div id='labelPositionReached'>
+		<label>Move Result:</label>
+		<input type='text' id='moveResult' readonly />
+	</div>
+		<!-- button forward---------------------------------------------------------------->
+	<div id="tableDirections">
+		<table>
+			<tr>
+				<td><a id="turnLeft" class="ui-icon ui-icon-arrowreturn-1-w"><span>turnleft</span></a></td>
+				<td><a id="moveForward" class="ui-icon ui-icon-arrow-1-n"><span>forward</span></a></td>
+				<td><a id="turnRight" class="ui-icon ui-icon-arrowreturn-1-e"><span>turnright</span></a></td>
+			</tr>
+			<tr>
+				<td><a id="moveLeft" class="ui-icon ui-icon-arrow-1-w"><span>moveleft</span></a></td>
+				<td></td>
+				<td><a id="moveRight" class="ui-icon ui-icon-arrow-1-e"><span>moveright</span></a></td>
+			</tr>
+						<tr>
+				<td></td>
+				<td><a id="moveBackward" class="ui-icon ui-icon-arrow-1-s"><span>moveback</span></a></td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- Serial Control -------------------------------------------------------->
+	<div id="serialConnection" class="ui-icon ui-icon-refresh">Serial Connection</div>
+
+	<!-- Shutdown Button -------------------------------------------------------->
+	<div id="iconShutdown">
+		<a href="/robota/api/doShutdown" class="ui-icon ui-icon-power">icon</a>
+	</div>
+
+	<script>
+		var state = '';
+	 	$.get('/state.json', function(data) { state = data ; });
+
+		var left = { posYaw : 37, posPitch : 37 } //TODO in zentrale Konfig auslagern und auch in app laden
+		var center = { move: 'stop' }
+		var serial = { state: 'unknown' , command: 'connect' }
+		var textYaw = 'yaw';
+		var textPitch = 'pitch';
+		//----websocket---------------------------------------------
+    var ws;
+		ws = new WebSocket("ws://localhost:9090/websocket");
+		ws.onmessage = function(e) {
+					showMoveResult(e.data);
+		};
+
+		function showMoveResult(result){
+			$("#moveResult").val(result);
+		}
+
+		function sendMsg(messageToServer) {
+				ws.send(messageToServer);
+		}
+
+		//--on load init functions---------------------------------
+		$(function() {
+			/*set default screen text values*/
+			$("#moveResult").val(" [ not yet ]");
+			$("#labelPositionPitch").val(textYaw + " " + left.posYaw);
+			$("#positionPitch").val(textPitch + " " + left.posPitch);
+
+			/*set arrow functions*/
+			document.getElementById("moveLeft").addEventListener("click",function(){     center.move ='left';      sendMsg('center:' + center.move)} );
+			document.getElementById("moveForward").addEventListener("click",function(){  center.move ='forward';   sendMsg('center:' + center.move)} );
+			document.getElementById("moveRight").addEventListener("click",function(){    center.move ='right';     sendMsg('center:' + center.move)} );
+			document.getElementById("moveBackward").addEventListener("click",function(){ center.move ='backward';  sendMsg('center:' + center.move)} );
+			document.getElementById("turnLeft").addEventListener("click",function(){     center.move ='turnLeft';  sendMsg('center:' + center.move)} );
+			document.getElementById("turnRight").addEventListener("click",function(){    center.move ='turnRight'; sendMsg('center:' + center.move)} );
+			document.getElementById("serialConnection").addEventListener("click",function () { getSerialConnectionState() })	});
+
+		/*yaw slider*/
+		$(function() {
+			$("#slider-position-yaw").slider({
+				range : "min",
+				value : left.posYaw,
+				min : 1,
+				max : 255,
+				slide : function(event, ui) {
+					left.posYaw = ui.value;
+					$("#labelPositionPitch").val(textYaw + " " + left.posYaw);
+					sendMsg('leftYaw:' + left.posYaw);
+				}
+			});
+		});
+
+		/*pitch slider*/
+		$(function() {
+			$("#slider-position-pitch").slider({
+				orientation : "vertical",
+				range : "min",
+				value : left.posPitch,
+				min : 1,
+				max : 255,
+				slide : function(event, ui) {
+					left.posPitch = ui.value;
+					$("#positionPitch").val(textPitch + " " + left.posPitch);
+					sendMsg('leftPitch:' + left.posPitch);
+				}
+			});
+		});
+
+		//-----Serial-----------------------------------------------------------------------------
+		//TODO make this work
+		var elemSC = document.getElementById("serialConnection");
+		elemSC.classList.add('serialConnection');
+
+		function showSerialState(){
+
+			if(serial.state == state.connecting){
+				elemSC.classList.remove('serialNoConnect');
+
+				elemSC.classList.add('serialConnected');
+			}
+			if(serial.state == state.connected){
+				elemSC.classList.remove('serialNoConnect');
+
+				elemSC.classList.add('serialConnected');
+			}
+			if(serial.state == state.noConnect){
+				elemSC.classList.remove('serialConnected');
+
+				elemSC.classList.add('serialNoConnect');
+			}
+			if(serial.state == state.noPort){
+				elemSC.classList.remove('serialConnected');
+
+				elemSC.classList.add('serialNoConnect');
+			}
+		}
+		//---Serial End-----------------------------------------------------------------------------
+	</script>
+</body>
+</html>

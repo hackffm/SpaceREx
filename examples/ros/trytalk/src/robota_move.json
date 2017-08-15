@@ -1,0 +1,22 @@
+{
+  "arduino": {
+	"center":{
+	    "left": "a",
+	    "forward": "w",
+	    "backward": "s",
+	    "right": "d",
+	    "turnRight": "e",
+	    "turnLeft": "q",
+	    "stand": "!",
+	    "sit": "."
+	}
+  },
+  "Omnibot": {
+	"center":{
+	    "left": "2200",
+	    "forward": "1600",
+	    "backward": "2000",
+	    "right": "1800"
+	}
+  }
+}
