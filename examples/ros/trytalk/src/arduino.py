@@ -57,9 +57,7 @@ def listener():
     print('init ' + NODE_NAME)
     rospy.init_node(NODE_NAME, anonymous=True)
 
-    rospy.Subscriber('fromwebserver_topic', String, callback)
-
-    # spin() simply keeps python from exiting until this node is stopped
+    rospy.Subscriber('fromWebserver_topic', String, callback)
     rospy.spin()
 
 if __name__ == '__main__':

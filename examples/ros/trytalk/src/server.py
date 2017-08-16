@@ -26,10 +26,11 @@ def cb_writeToSocket(data):
 def readMessageFromRos(messageFromROS):
     print('init fromRos_topic')
     rospy.Subscriber('fromRos_topic', String, cb_writeToSocket)
+    rospy.spin()
 
 def writeMessageToRos(messageToRos):
     print ('init fromWebserver_topic')
-    pub = rospy.Publisher('fromwebserver_topic', String, queue_size=10)
+    pub = rospy.Publisher('fromWebserver_topic', String, queue_size=10)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         msg = messageToRos.get()
