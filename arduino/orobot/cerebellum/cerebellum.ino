@@ -50,6 +50,7 @@ void receive_serial_cmd(void) {
             int temp = atoi((const char *)&cmd[1]);           
             Serial.print("l:");
             Serial.println(temp);  
+            Serial1.write("left");  
             if(temp > 0) {
               if(temp > 255) temp = 255;
               digitalWrite(M1IN1, HIGH);
@@ -83,7 +84,11 @@ void receive_serial_cmd(void) {
               analogWrite(M2D2, temp); 
             }                        
           }  
-          break;                 
+          break; 
+          case 'e':   // echo
+          Serial.println("echo");
+          Serial1.println("echo");
+          break;
        }    
       }
       cmdcount = 0;

@@ -1,6 +1,9 @@
 Number.prototype.map = function (in_min, in_max, out_min, out_max) {
   return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+function echo() {
+		console.log("echo");
+	}
 function init() {
 	var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d");
@@ -78,4 +81,5 @@ function init() {
 		ctx.lineTo(pos.ox, pos.oy);
 		ctx.stroke();
 	}
+
 }
