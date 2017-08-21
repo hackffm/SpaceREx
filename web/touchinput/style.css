@@ -1,0 +1,33 @@
+#content {
+  width: 502px;
+  height: 800px;
+  position: relative;
+  margin: 0 auto;
+  border:1px solid #000000;
+}
+#steercontainer {
+  width: 500px;
+  height: 500px;
+  position: relative;
+  margin: 0 auto;
+}
+#myCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+#video {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.container {
+	display: flex;
+  position: relative;
+  margin: 0 auto;
+  top: 450px;
+}
+.fixed {
+	width: 120px;
+}
