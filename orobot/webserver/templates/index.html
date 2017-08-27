@@ -43,10 +43,10 @@
 		 Number.prototype.map = function (in_min, in_max, out_min, out_max) {
 		  return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 		}
- 
+
         window.onload = function() {
             ws = new WebSocket("ws://orobot:9090/websocket");
- 
+
             ws.onmessage = function(e) {
                //alert(e.data);
 				document.getElementById('out').value += e.data;
@@ -55,6 +55,7 @@
 			var ctx = canvas.getContext("2d");
 			var rect = canvas.getBoundingClientRect();
 			var mdown = false;
+      var pos;
 			var width = 640;
 			var height = 480;
 			canvas.addEventListener("mousedown", inputStart, false);
@@ -74,8 +75,13 @@
 				mdown = false;
 			}
 			function inputMove(e) {
-				if(mdown) {
-					var pos = getMousePos(e);
+          if(mdown) {
+            if(e.touches && e.touches.length > 0) {
+          	pos = getMousePos(e.touches[0]);
+          } else {
+          	pos = getMousePos(e);
+          }
+
 					centerPos(pos);
 			//mapCenterPos(pos);
 					toLeftRight(pos);
@@ -83,7 +89,7 @@
 					drawHandle(pos);
 				}
 			}
-			function getMousePos(evt) {	
+			function getMousePos(evt) {
 				var pos = {
 				  x: evt.clientX - Math.round(rect.left),
 				  y: evt.clientY - Math.round(rect.top)
@@ -116,14 +122,14 @@
 				ctx.clearRect(0, 0, rect.width, rect.height);
 				var s = 10;
 				ctx.fillRect(pos.ox-s/2, pos.oy-s/2, s, s);
-				
+
 				ctx.beginPath();
 				ctx.moveTo(rect.width/2, rect.height/2);
 				ctx.lineTo(pos.ox, pos.oy);
 				ctx.stroke();
 			}
         }
- 
+
         function sendMsg() {
             ws.send(document.getElementById('msg').value);
         }
@@ -135,7 +141,7 @@
 <body>
 <div id="content">
 		<div id="container">
-			<canvas id="myCanvas" width=640 height=480 style="border:1px solid #000000;"></canvas> 
+			<canvas id="myCanvas" width=640 height=480 style="border:1px solid #000000;"></canvas>
 			<div id="video">
 				<img src="http://orobot:8080/stream/video.mjpeg">
 			</div>
@@ -145,14 +151,14 @@
 			<div id="cxcy" class="fixed">cx cy</div>
 			<div id="lr" class="fixed">left right</div>
 		</div>
-		
-		
+
+
 		Send:<input type="text" id="msg" maxlength="25" size="30" />
 			&nbsp;<input type="button" onclick="sendMsg();" value="Send" />
 		<br>
 		Received:<br>
 		<textarea id="out" rows="4" cols="50"></textarea>
 </div>
-<input type="button" onclick="echo()" value="echo" />  
+<input type="button" onclick="echo()" value="echo" />
 </body>
 </html>
