@@ -108,3 +108,7 @@ function sendMsg() {
 function echo() {
   ws.send("echo\r");
 }
+
+function soundSheep() {
+    ws.send("s1\r");
+}
