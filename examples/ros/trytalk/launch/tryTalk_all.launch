@@ -1,4 +1,0 @@
-<launch>
-	<node pkg="tryTalk" type="server.py"   name="webserver_node"/>
-	<node pkg="tryTalk" type="arduino.py" name="listener_node" />
-</launch>
